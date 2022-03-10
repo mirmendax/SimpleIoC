@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.Interface
 {
-    internal interface IRuleOrderConvert<T, K> : IRuleConvert<T, K>
+    public interface IRuleOrderConvert<T, K> : IRuleConvert<T, K>
     {
         int OrderRule { get; }
     }

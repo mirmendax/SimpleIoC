@@ -4,11 +4,6 @@ using ConsoleApp.Model;
 using ConsoleApp.Rules;
 using SimpleIoC;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Configuration;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
@@ -40,7 +35,6 @@ namespace ConsoleApp
             counter1.Inc();
             counter1.Inc();
             counter1.Inc();
-            //SimpleFactory.ReBind<Counter, Counter>(true);
             var counter2 = SimpleFactory.Get<Counter>();
             Console.WriteLine(counter1.Count);
             Console.WriteLine(counter2.Count);
