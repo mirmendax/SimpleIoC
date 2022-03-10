@@ -58,7 +58,7 @@ namespace SimpleIoC
         /// <typeparam name="TImplement"></typeparam>
         public static void Singleton<TService, TImplement>()
         {
-            Bind(typeof(TService), typeof(TImplement), $"{nameof(TService)}On{nameof(TImplement)}", true);
+            Bind(typeof(TService), typeof(TImplement), $"{nameof(TService)}On{nameof(TImplement)}asSingleton", true);
         }
 
         /// <summary>
@@ -203,13 +203,17 @@ namespace SimpleIoC
             lock (_lock)
             {
                 Type binderAttr = typeof(SimpleBinderAttribute);
+                Type overrideAttr = typeof(SimpleOverridedAttribute);
+
                 foreach (var type in new AssemblyTypeLoader().GetTypes(assemblies))
                 {
                     var tBind = type.GetCustomAttributes(binderAttr, false);
                     if (tBind.Length != 0)
                     {
+                        var tOverr = type.GetCustomAttributes(overrideAttr, false);
+                        if (tOverr.Length != 0) continue;
                         var tAtrribute = tBind.GetValue(0) as SimpleBinderAttribute;
-                        if (types.Any(x => x.Service.Equals(tAtrribute.Service) && x.Implementation.Equals(type))) return;
+                        if (types.Any(x => x.Service.Equals(tAtrribute.Service) && x.Implementation.Equals(type))) continue;
                         types.Add(new TypeConfig(tAtrribute.Service, type, tAtrribute.Name));
                     }
                 }
@@ -226,14 +230,14 @@ namespace SimpleIoC
                 var tOverr = type.GetCustomAttributes(overrideAttr, false);
                 if (tOverr.Length != 0 && type.BaseType != objType)
                 {
-                    var findType = FindByBaseType(type.BaseType);
+                    var findType = FindByImplementType(type.BaseType);
                     if (findType != null)
                         ReBind(findType.Implementation, type, "");
                 }
             }
         }
 
-        private static TypeConfig FindByBaseType(Type implement)
+        private static TypeConfig FindByImplementType(Type implement)
         {
             if (implement == null) return null;
             if (types == null) return null;
